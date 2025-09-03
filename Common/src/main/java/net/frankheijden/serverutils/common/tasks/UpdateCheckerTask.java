@@ -34,7 +34,7 @@ public class UpdateCheckerTask<U extends ServerUtilsPlugin<P, ?, ?, ?, ?>, P> im
     private final boolean download;
     private final boolean install;
 
-    private static final String GITHUB_LINK = "https://api.github.com/repos/FrankHeijden/ServerUtils/releases/latest";
+    private static final String GITHUB_LINK = "https://git.zhira.net/api/v1/repos/zhdev/bukman/releases/latest";
     private static final String GITHUB_UPDATER_LINK = "https://api.github.com/repos/FrankHeijden/ServerUtilsUpdater"
             + "/releases/latest";
 
@@ -163,7 +163,7 @@ public class UpdateCheckerTask<U extends ServerUtilsPlugin<P, ?, ?, ?, ?>, P> im
             if (sender.isPlayer()) {
                 broadcastDownloadStatus(githubVersion, false);
             } else {
-                plugin.getLogger().log(Level.INFO, DOWNLOADED, new Object[]{ "ServerUtils", githubVersion });
+                plugin.getLogger().log(Level.INFO, DOWNLOADED, new Object[]{ "Bukman", githubVersion });
             }
             return;
         }
