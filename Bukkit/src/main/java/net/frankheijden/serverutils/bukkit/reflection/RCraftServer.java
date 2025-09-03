@@ -3,6 +3,7 @@ package net.frankheijden.serverutils.bukkit.reflection;
 import dev.frankheijden.minecraftreflection.MinecraftReflection;
 import dev.frankheijden.minecraftreflection.MinecraftReflectionVersion;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
@@ -51,7 +52,7 @@ public class RCraftServer {
     public static void syncCommands(Set<String> removedCommands) {
         if (MinecraftReflectionVersion.MINOR < 13) return;
 
-        Collection children = RCommandDispatcher.getDispatcher().getRoot().getChildren();
+        Collection children = new ArrayList<>(RCommandDispatcher.getDispatcher().getRoot().getChildren());
         reflection.invoke(Bukkit.getServer(), "syncCommands");
         Object root = RCommandDispatcher.getDispatcher().getRoot();
 
