@@ -37,6 +37,7 @@ public interface PluginProvider<P, D extends ServerUtilsPluginDescription> {
             try {
                 pluginDescriptionOptional = getPluginDescription(file);
             } catch (InvalidPluginDescriptionException ex) {
+                ex.printStackTrace();
                 continue;
             }
 
@@ -57,6 +58,7 @@ public interface PluginProvider<P, D extends ServerUtilsPluginDescription> {
             ServerUtilsPluginDescription description = getLoadedPluginDescription(loadedPlugin);
             if (description.getDependencies().contains(pluginId)) {
                 plugins.add(loadedPlugin);
+                plugins.addAll(getPluginsDependingOn(description.getId()));
             }
         }
 
