@@ -18,7 +18,9 @@
     "reload": "<dark_aqua>Successfully reloaded <aqua>ServerUtils configurations</aqua>!",
     "serverutils-updater": "<dark_aqua>Loaded and enabled ServerUtilsUpdater. Completion can be monitored from the console, attempting restart now...",
     "loadplugin": "<dark_aqua>Successfully loaded <aqua><plugin></aqua>!",
+    "loadplugin-recursively": "<dark_aqua>Successfully recursively loaded <aqua><plugin></aqua>!",
     "unloadplugin": "<dark_aqua>Successfully unloaded <aqua><plugin></aqua>!",
+    "unloadplugin-recursively": "<dark_aqua>Successfully recursively unloaded <aqua><plugin></aqua>!",
     "reloadplugin": {
       "success": "<dark_aqua>Successfully reloaded <aqua><plugin></aqua>!",
       "serverutils": "<red>Sorry, but you can't reload ServerUtils this way. Please restart using <dark_red>/<command></dark_red>."
@@ -28,7 +30,8 @@
       "format": "<dark_red><plugin>",
       "separator": "<red>, ",
       "last-separator": " <red>and ",
-      "override": "<red>Use \"<dark_red>/<command></dark_red>\" to force command execution."
+      "override": "<red>Use \"<dark_red>/<command></dark_red>\" to force command execution.",
+      "recursively": "<red>Use \"<dark_red>/<command></dark_red>\" to recursively command execution."
     },
     "watchplugin": {
       "start": "<dark_aqua>Started watching <aqua><plugin></aqua>!",
