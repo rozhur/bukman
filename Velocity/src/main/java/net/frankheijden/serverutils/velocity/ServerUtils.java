@@ -19,12 +19,12 @@ import org.bstats.velocity.Metrics;
 import org.slf4j.Logger;
 
 @Plugin(
-        id = "serverutils",
-        name = "ServerUtils",
+        id = "bukman",
+        name = "Bukman",
         version = "{version}",
         description = "A server utility",
-        url = "https://github.com/FrankHeijden/ServerUtils",
-        authors = "FrankHeijden"
+        url = "https://git.zhira.net/zhdev/bukman",
+        authors = {"FrankHeijden", "ZhDev"}
 )
 public class ServerUtils {
 
@@ -47,7 +47,7 @@ public class ServerUtils {
     private Metrics.Factory metricsFactory;
 
     @Inject
-    @Named("serverutils")
+    @Named("bukman")
     private PluginContainer pluginContainer;
 
     private final VelocityPluginCommandManager pluginCommandManager;
