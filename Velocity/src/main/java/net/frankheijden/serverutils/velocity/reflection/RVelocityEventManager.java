@@ -9,7 +9,6 @@ import dev.frankheijden.minecraftreflection.MinecraftReflection;
 import java.lang.reflect.Array;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutorService;
 import java.util.stream.Collectors;
 
 public class RVelocityEventManager {
@@ -65,7 +64,7 @@ public class RVelocityEventManager {
         Object registrationsEmptyArray = Array.newInstance(RHandlerRegistration.reflection.getClazz(), 0);
         Class<?> registrationsArrayClass = registrationsEmptyArray.getClass();
 
-        ExecutorService executor = reflection.invoke(manager, "getAsyncExecutor");
+        /*ExecutorService executor = reflection.invoke(manager, "getAsyncExecutor");
         executor.execute(() -> reflection.invoke(
                 manager,
                 "fire",
@@ -74,7 +73,16 @@ public class RVelocityEventManager {
                 ClassObject.of(int.class, 0),
                 ClassObject.of(boolean.class, true),
                 ClassObject.of(registrationsArrayClass, registrations.toArray((Object[]) registrationsEmptyArray))
-        ));
+        ));*/
+        reflection.invoke(
+                manager,
+                "fire",
+                ClassObject.of(CompletableFuture.class, future),
+                ClassObject.of(Object.class, event),
+                ClassObject.of(int.class, 0),
+                ClassObject.of(boolean.class, true),
+                ClassObject.of(registrationsArrayClass, registrations.toArray((Object[]) registrationsEmptyArray))
+        );
 
         return future;
     }
