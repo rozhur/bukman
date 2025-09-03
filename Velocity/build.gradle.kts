@@ -8,7 +8,7 @@ group = "${rootProject.group}"
 val dependencyDir = "${group}.velocity.dependencies"
 version = rootProject.version
 base {
-    archivesName.set("${rootProject.name}-Velocity")
+    archivesName.set("${rootProject.name}-velocity")
 }
 
 repositories {
@@ -17,7 +17,7 @@ repositories {
 }
 
 dependencies {
-    implementation("cloud.commandframework:cloud-velocity:${VersionConstants.cloudVersion}")
+    implementation("org.zhdev.oblak:cloud-velocity:${VersionConstants.cloudVersion}")
     implementation("org.bstats:bstats-velocity:${VersionConstants.bstatsVersion}")
     implementation(project(":Common"))
     implementation("net.kyori:adventure-text-minimessage:${VersionConstants.adventureMinimessageVersion}") {

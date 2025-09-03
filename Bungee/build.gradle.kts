@@ -9,7 +9,7 @@ val rootDependencyDir = "${group}.dependencies"
 val dependencyDir = "${group}.bungee.dependencies"
 version = rootProject.version
 base {
-    archivesName.set("${rootProject.name}-Bungee")
+    archivesName.set("${rootProject.name}-bungee")
 }
 
 repositories {
@@ -17,7 +17,7 @@ repositories {
 }
 
 dependencies {
-    implementation("cloud.commandframework:cloud-bungee:${VersionConstants.cloudVersion}")
+    implementation("org.zhdev.oblak:cloud-bungee:${VersionConstants.cloudVersion}")
     implementation("net.kyori:adventure-api:${VersionConstants.adventureVersion}") {
         exclude("net.kyori", "adventure-text-minimessage")
     }
@@ -38,7 +38,7 @@ tasks.withType<ShadowJar> {
 }
 
 bungee {
-    name = "ServerUtils"
+    name = "Bukman"
     main = "net.frankheijden.serverutils.bungee.ServerUtils"
     description = "A server utility"
     softDepends = setOf("ServerUtilsUpdater")

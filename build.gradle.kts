@@ -8,7 +8,7 @@ plugins {
 
 group = "net.frankheijden.serverutils"
 val dependencyDir = "${group}.dependencies"
-version = "3.5.5-SNAPSHOT"
+version = "3.5.6-SNAPSHOT"
 
 java {
     sourceCompatibility = JavaVersion.VERSION_1_8
@@ -27,17 +27,19 @@ subprojects {
     }
 
     repositories {
+        mavenLocal()
         mavenCentral()
         maven("https://jitpack.io")
         maven("https://oss.sonatype.org/content/repositories/snapshots")
-        maven("https://papermc.io/repo/repository/maven-public/")
+        maven("https://repo.papermc.io/repository/maven-public/")
         maven("https://libraries.minecraft.net")
+        maven("https://maven.zhira.net/repository/zhdev/")
     }
 
     dependencies {
-        implementation("cloud.commandframework:cloud-core:${VersionConstants.cloudVersion}")
-        implementation("cloud.commandframework:cloud-brigadier:${VersionConstants.cloudVersion}")
-        implementation("com.github.FrankHeijden:MinecraftReflection:1.0.0")
+        implementation("org.zhdev.oblak:cloud-core:${VersionConstants.cloudVersion}")
+        implementation("org.zhdev.oblak:cloud-brigadier:${VersionConstants.cloudVersion}")
+        implementation("org.zhdev:megareflection:1.0.2-SNAPSHOT")
         implementation("com.google.code.gson:gson:2.8.6")
         implementation("me.lucko:commodore:2.2")
         compileOnly("com.mojang:brigadier:1.0.18")
@@ -93,6 +95,7 @@ subprojects {
         }
         relocate("net.kyori.adventure.text.minimessage", "${dependencyDir}.adventure.text.minimessage")
         relocate("dev.frankheijden.minecraftreflection", "${dependencyDir}.minecraftreflection")
+        relocate("org.zhdev", "${dependencyDir}.zhdev")
     }
 
     publishing {
@@ -113,11 +116,11 @@ subprojects {
         }
 
         publications {
-            create<MavenPublication>("ServerUtils") {
+            create<MavenPublication>("bukman") {
                 artifact(tasks["shadowJar"]) {
                     classifier = ""
                 }
-                artifactId = "ServerUtils-$artifactId"
+                artifactId = "bukman-$artifactId"
             }
         }
     }
@@ -192,11 +195,11 @@ publishing {
     }
 
     publications {
-        create<MavenPublication>("ServerUtils") {
+        create<MavenPublication>("bukman") {
             artifact(tasks["shadowJar"]) {
                 classifier = ""
             }
-            artifactId = "ServerUtils"
+            artifactId = "bukman"
         }
     }
 }

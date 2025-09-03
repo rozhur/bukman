@@ -9,11 +9,11 @@ val rootDependencyDir = "${rootProject.group}.dependencies"
 val dependencyDir = "${group}.bukkit.dependencies"
 version = rootProject.version
 base {
-    archivesName.set("${rootProject.name}-Bukkit")
+    archivesName.set("${rootProject.name}-bukkit")
 }
 
 dependencies {
-    implementation("cloud.commandframework:cloud-paper:${VersionConstants.cloudVersion}")
+    implementation("org.zhdev.oblak:cloud-paper:${VersionConstants.cloudVersion}")
     implementation("net.kyori:adventure-api:${VersionConstants.adventureVersion}") {
         exclude("net.kyori", "adventure-text-minimessage")
     }
@@ -36,11 +36,11 @@ tasks.withType<ShadowJar> {
 }
 
 bukkit {
-    name = "ServerUtils"
+    name = "Bukman"
     main = "net.frankheijden.serverutils.bukkit.ServerUtils"
     description = "A server utility"
     apiVersion = "1.13"
-    website = "https://github.com/FrankHeijden/ServerUtils"
+    website = "https://git.zhira.net/zhdev/bukman"
     softDepend = listOf("ServerUtilsUpdater")
-    authors = listOf("FrankHeijden")
+    authors = listOf("FrankHeijden", "ZhDev")
 }
