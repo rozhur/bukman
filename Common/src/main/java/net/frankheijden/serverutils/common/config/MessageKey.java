@@ -6,7 +6,9 @@ public enum MessageKey implements PlaceholderConfigKey {
 
     RELOAD("reload", false),
     LOADPLUGIN("loadplugin"),
+    LOADPLUGIN_RECURSIVELY("loadplugin-recursively"),
     UNLOADPLUGIN("unloadplugin"),
+    UNLOADPLUGIN_RECURSIVELY("unloadplugin-recursively"),
     SERVERUTILS_UPDATER("serverutils-updater", false),
     RELOADPLUGIN_SUCCESS("reloadplugin.success"),
     RELOADPLUGIN_SERVERUTILS("reloadplugin.serverutils"),
@@ -27,6 +29,7 @@ public enum MessageKey implements PlaceholderConfigKey {
     DEPENDING_PLUGINS_SEPARATOR("depending-plugins.separator", false),
     DEPENDING_PLUGINS_LAST_SEPARATOR("depending-plugins.last-separator", false),
     DEPENDING_PLUGINS_OVERRIDE("depending-plugins.override"),
+    DEPENDING_PLUGINS_RECURSIVELY("depending-plugins.recursively"),
     WATCHPLUGIN_START("watchplugin.start"),
     WATCHPLUGIN_CHANGE("watchplugin.change", false),
     WATCHPLUGIN_STOPPED("watchplugin.stopped"),
