@@ -7,6 +7,7 @@ import cloud.commandframework.context.CommandContext;
 import cloud.commandframework.exceptions.parsing.NoInputProvidedException;
 import io.leangen.geantyref.TypeToken;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Queue;
@@ -64,7 +65,9 @@ public class PluginsArgument<C extends ServerUtilsAudience<?>, P> extends Comman
                 return ArgumentParseResult.failure(new NoInputProvidedException(PluginsParser.class, context));
             }
 
-            Set<String> flags = plugin.getCommandsResource().getAllFlagAliases(commandConfigPath + ".flags.force");
+            Set<String> flags = new HashSet<>();
+            flags.addAll(plugin.getCommandsResource().getAllFlagAliases(commandConfigPath + ".flags.force"));
+            flags.addAll(plugin.getCommandsResource().getAllFlagAliases(commandConfigPath + ".flags.recursive"));
 
             int queueSize = inputQueue.size();
             List<P> plugins = new ArrayList<>(queueSize);
