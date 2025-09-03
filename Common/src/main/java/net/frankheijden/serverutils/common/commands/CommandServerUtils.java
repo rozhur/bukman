@@ -10,6 +10,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.IntFunction;
@@ -207,8 +208,13 @@ public abstract class CommandServerUtils<U extends ServerUtilsPlugin<P, ?, C, ?,
             return;
         }
 
-        if (checkDependingPlugins(context, sender, plugins, "unloadplugin")) {
-            return;
+        boolean recursive = context.flags().contains("recursive");
+
+        List<P> dependingPlugins = getDependingPlugins(context, sender, plugins, "unloadplugin");
+        if (!recursive) {
+            if (!dependingPlugins.isEmpty()) return;
+        } else {
+            plugins.addAll(0, dependingPlugins);
         }
 
         PluginResults<P> disableResults = plugin.getPluginManager().disablePlugins(plugins);
@@ -232,7 +238,10 @@ public abstract class CommandServerUtils<U extends ServerUtilsPlugin<P, ?, C, ?,
             return;
         }
 
-        if (checkDependingPlugins(context, sender, plugins, "reloadplugin")) {
+        boolean recursive = context.flags().contains("recursive");
+
+        List<P> dependingPlugins = getDependingPlugins(context, sender, plugins, "reloadplugin");
+        if (!recursive && !dependingPlugins.isEmpty()) {
             return;
         }
 
@@ -240,50 +249,108 @@ public abstract class CommandServerUtils<U extends ServerUtilsPlugin<P, ?, C, ?,
             return;
         }
 
+        if (recursive && !dependingPlugins.isEmpty()) {
+            PluginResults<P> disableDependingResults = plugin.getPluginManager().disablePlugins(dependingPlugins);
+            for (PluginResult<P> disableResult : disableDependingResults.getResults()) {
+                if (!disableResult.isSuccess() && disableResult.getResult() != Result.ALREADY_DISABLED) {
+                    disableResult.sendTo(sender, null);
+                    return;
+                }
+            }
+
+            CloseablePluginResults<P> unloadDependingResults = plugin.getPluginManager()
+                    .unloadPlugins(dependingPlugins);
+            unloadDependingResults.tryClose();
+            unloadDependingResults.sendTo(sender, MessageKey.UNLOADPLUGIN_RECURSIVELY);
+        }
+
         PluginResults<P> reloadResults = plugin.getPluginManager().reloadPlugins(plugins);
         reloadResults.sendTo(sender, MessageKey.RELOADPLUGIN_SUCCESS);
+
+        if (recursive && !dependingPlugins.isEmpty()) {
+            List<String> pluginIds = new ArrayList<>(dependingPlugins.size());
+            for (P p : dependingPlugins) {
+                pluginIds.add(plugin.getPluginManager().getPluginId(p));
+            }
+            List<File> pluginFiles = new ArrayList<>(dependingPlugins.size());
+            for (String pluginId : pluginIds) {
+                Optional<File> pluginFile = plugin.getPluginManager().getPluginFile(pluginId);
+                if (!pluginFile.isPresent()) {
+                    new PluginResults<P>().addResult(pluginId, Result.FILE_DELETED).sendTo(sender, null);
+                    continue;
+                }
+                pluginFiles.add(pluginFile.get());
+            }
+
+            PluginResults<P> loadDependingResults = plugin.getPluginManager().loadPlugins(pluginFiles);
+            if (!loadDependingResults.isSuccess()) {
+                PluginResult<P> failedResult = loadDependingResults.last();
+                failedResult.sendTo(sender, null);
+            }
+
+            PluginResults<P> enableResults = plugin.getPluginManager().enablePlugins(loadDependingResults.getPlugins());
+            enableResults.sendTo(sender, MessageKey.LOADPLUGIN_RECURSIVELY);
+        }
     }
 
     protected boolean checkDependingPlugins(CommandContext<C> context, C sender, List<P> plugins, String subcommand) {
-        if (context.flags().contains("force")) return false;
+        return !getDependingPlugins(context, sender, plugins, subcommand).isEmpty();
+    }
+
+    protected List<P> getDependingPlugins(CommandContext<C> context, C sender, List<P> plugins, String subcommand) {
+        if (context.flags().contains("force")) return Collections.emptyList();
+
+        boolean recursive = context.flags().contains("recursive");
 
         AbstractPluginManager<P, ?> pluginManager = plugin.getPluginManager();
         MessagesResource messages = plugin.getMessagesResource();
 
+        List<P> dependingPluginsAll = new ArrayList<>();
         boolean hasDependingPlugins = false;
         for (P plugin : plugins) {
             String pluginId = pluginManager.getPluginId(plugin);
 
             List<P> dependingPlugins = pluginManager.getPluginsDependingOn(pluginId);
             if (!dependingPlugins.isEmpty()) {
-                TextComponent.Builder builder = Component.text();
-                builder.append(messages.get(MessageKey.DEPENDING_PLUGINS_PREFIX).toComponent(
-                        Template.of("plugin", pluginId)
-                ));
-                builder.append(ListComponentBuilder.create(dependingPlugins)
-                        .format(p -> messages.get(MessageKey.DEPENDING_PLUGINS_FORMAT).toComponent(
-                                Template.of("plugin", pluginManager.getPluginId(p))
-                        ))
-                        .separator(messages.get(MessageKey.DEPENDING_PLUGINS_SEPARATOR).toComponent())
-                        .lastSeparator(messages.get(MessageKey.DEPENDING_PLUGINS_LAST_SEPARATOR).toComponent())
-                        .build());
-                sender.sendMessage(builder.build());
+                if (!recursive) {
+                    TextComponent.Builder builder = Component.text();
+                    builder.append(messages.get(MessageKey.DEPENDING_PLUGINS_PREFIX).toComponent(
+                            Template.of("plugin", pluginId)
+                    ));
+                    builder.append(ListComponentBuilder.create(dependingPlugins)
+                            .format(p -> messages.get(MessageKey.DEPENDING_PLUGINS_FORMAT).toComponent(
+                                    Template.of("plugin", pluginManager.getPluginId(p))
+                            ))
+                            .separator(messages.get(MessageKey.DEPENDING_PLUGINS_SEPARATOR).toComponent())
+                            .lastSeparator(messages.get(MessageKey.DEPENDING_PLUGINS_LAST_SEPARATOR).toComponent())
+                            .build());
+                    sender.sendMessage(builder.build());
+                }
+
                 hasDependingPlugins = true;
+                dependingPluginsAll.addAll(dependingPlugins);
             }
         }
 
-        if (hasDependingPlugins) {
-            String flagPath = getRawPath(subcommand) + ".flags.force";
-            String forceFlag = plugin.getCommandsResource().getAllFlagAliases(flagPath).stream()
+        if (!recursive && hasDependingPlugins) {
+            String forceFlagPath = getRawPath(subcommand) + ".flags.force";
+            String forceFlag = plugin.getCommandsResource().getAllFlagAliases(forceFlagPath).stream()
                     .min(Comparator.comparingInt(String::length))
                     .orElse("-f");
+            String recursiveFlagPath = getRawPath(subcommand) + ".flags.recursive";
+            String rescuriveFlag = plugin.getCommandsResource().getAllFlagAliases(recursiveFlagPath).stream()
+                    .min(Comparator.comparingInt(String::length))
+                    .orElse("-r");
 
             sender.sendMessage(messages.get(MessageKey.DEPENDING_PLUGINS_OVERRIDE).toComponent(
                     Template.of("command", context.getRawInputJoined() + " " + forceFlag)
             ));
+            sender.sendMessage(messages.get(MessageKey.DEPENDING_PLUGINS_RECURSIVELY).toComponent(
+                    Template.of("command", context.getRawInputJoined() + " " + rescuriveFlag)
+            ));
         }
 
-        return hasDependingPlugins;
+        return dependingPluginsAll;
     }
 
     protected boolean checkServerUtils(CommandContext<C> context, C sender, List<P> plugins) {
