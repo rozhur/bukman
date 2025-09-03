@@ -24,9 +24,16 @@ public class VelocityPluginDescription implements ServerUtilsPluginDescription {
         this.description = description;
 
         Optional<Path> sourceOptional = description.getSource();
-        if (!sourceOptional.isPresent()) throw new InvalidPluginDescriptionException("Source path is null");
+        if (!sourceOptional.isPresent()) {
+            if (description.getId().equals("velocity")) {
+                this.file = null;
+            } else {
+                throw new InvalidPluginDescriptionException("Source path is null");
+            }
+        } else {
+            this.file = sourceOptional.get().toFile();
+        }
 
-        this.file = sourceOptional.get().toFile();
         this.author = String.join(", ", description.getAuthors());
         this.dependencies = description.getDependencies().stream()
                 .map(PluginDependency::getId)
