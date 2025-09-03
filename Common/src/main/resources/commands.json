@@ -73,6 +73,13 @@
               "permission": "serverutils.unloadplugin",
               "description": "Force disable and unload the specified plugin(s).",
               "display-in-help": false
+            },
+            "recursive": {
+              "main": "recursive",
+              "aliases": ["r"],
+              "permission": "serverutils.unloadplugin",
+              "description": "Recursively disable and unload the specified plugin(s).",
+              "display-in-help": false
             }
           }
         },
@@ -88,6 +95,13 @@
               "aliases": ["f"],
               "permission": "serverutils.reloadplugin",
               "description": "Force reloads the specified plugin(s).",
+              "display-in-help": false
+            },
+            "recursive": {
+              "main": "recursive",
+              "aliases": ["r"],
+              "permission": "serverutils.reloadplugin",
+              "description": "Recursively reloads the specified plugin(s).",
               "display-in-help": false
             }
           }
