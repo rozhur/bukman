@@ -7,9 +7,12 @@ import cloud.commandframework.context.CommandContext;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -202,7 +205,7 @@ public abstract class CommandServerUtils<U extends ServerUtilsPlugin<P, ?, C, ?,
 
     private void handleUnloadPlugin(CommandContext<C> context) {
         C sender = context.getSender();
-        List<P> plugins = Arrays.asList(context.get("plugins"));
+        List<P> plugins = new ArrayList<>(Arrays.asList(context.get("plugins")));
 
         if (checkProtectedPlugins(sender, plugins)) {
             return;
@@ -210,7 +213,7 @@ public abstract class CommandServerUtils<U extends ServerUtilsPlugin<P, ?, C, ?,
 
         boolean recursive = context.flags().contains("recursive");
 
-        List<P> dependingPlugins = getDependingPlugins(context, sender, plugins, "unloadplugin");
+        Collection<P> dependingPlugins = getDependingPlugins(context, sender, plugins, "unloadplugin");
         if (!recursive) {
             if (!dependingPlugins.isEmpty()) return;
         } else {
@@ -240,7 +243,7 @@ public abstract class CommandServerUtils<U extends ServerUtilsPlugin<P, ?, C, ?,
 
         boolean recursive = context.flags().contains("recursive");
 
-        List<P> dependingPlugins = getDependingPlugins(context, sender, plugins, "reloadplugin");
+        Collection<P> dependingPlugins = getDependingPlugins(context, sender, plugins, "reloadplugin");
         if (!recursive && !dependingPlugins.isEmpty()) {
             return;
         }
@@ -297,15 +300,16 @@ public abstract class CommandServerUtils<U extends ServerUtilsPlugin<P, ?, C, ?,
         return !getDependingPlugins(context, sender, plugins, subcommand).isEmpty();
     }
 
-    protected List<P> getDependingPlugins(CommandContext<C> context, C sender, List<P> plugins, String subcommand) {
-        if (context.flags().contains("force")) return Collections.emptyList();
+    protected Collection<P> getDependingPlugins(CommandContext<C> context, C sender, List<P> plugins,
+            String subcommand) {
+        if (context.flags().contains("force")) return Collections.emptySet();
 
         boolean recursive = context.flags().contains("recursive");
 
         AbstractPluginManager<P, ?> pluginManager = plugin.getPluginManager();
         MessagesResource messages = plugin.getMessagesResource();
 
-        List<P> dependingPluginsAll = new ArrayList<>();
+        Map<String, P> dependingPluginsAll = new HashMap<>();
         boolean hasDependingPlugins = false;
         for (P plugin : plugins) {
             String pluginId = pluginManager.getPluginId(plugin);
@@ -328,7 +332,9 @@ public abstract class CommandServerUtils<U extends ServerUtilsPlugin<P, ?, C, ?,
                 }
 
                 hasDependingPlugins = true;
-                dependingPluginsAll.addAll(dependingPlugins);
+                for (P dependingPlugin : dependingPlugins) {
+                    dependingPluginsAll.putIfAbsent(pluginManager.getPluginId(dependingPlugin), dependingPlugin);
+                }
             }
         }
 
@@ -350,7 +356,7 @@ public abstract class CommandServerUtils<U extends ServerUtilsPlugin<P, ?, C, ?,
             ));
         }
 
-        return dependingPluginsAll;
+        return dependingPluginsAll.values();
     }
 
     protected boolean checkServerUtils(CommandContext<C> context, C sender, List<P> plugins) {
