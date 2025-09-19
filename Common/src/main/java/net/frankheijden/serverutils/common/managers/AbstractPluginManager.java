@@ -39,7 +39,7 @@ public abstract class AbstractPluginManager<P, D extends ServerUtilsPluginDescri
      * Loads a list of files as plugins.
      */
     public PluginResults<P> loadPlugins(List<File> files) {
-        List<D> descriptions = new ArrayList<>(files.size());
+        Set<D> descriptions = new HashSet<>(files.size());
 
         for (File file : files) {
             D description;
@@ -117,7 +117,7 @@ public abstract class AbstractPluginManager<P, D extends ServerUtilsPluginDescri
      * Finds the first plugin where the enabled state does not match the given state it must be in.
      * This method can be overridden by implementations which don't support the enabled state.
      */
-    protected Optional<P> checkPluginStates(List<P> plugins, boolean enabled) {
+    protected Optional<P> checkPluginStates(Collection<P> plugins, boolean enabled) {
         for (P plugin : plugins) {
             if (isPluginEnabled(plugin) != enabled) {
                 return Optional.of(plugin);
@@ -142,7 +142,7 @@ public abstract class AbstractPluginManager<P, D extends ServerUtilsPluginDescri
     /**
      * Disables a list of plugins.
      */
-    public PluginResults<P> disablePlugins(List<P> plugins) {
+    public PluginResults<P> disablePlugins(Collection<P> plugins) {
         Optional<P> pluginOptional = checkPluginStates(plugins, true);
         if (pluginOptional.isPresent()) {
             return new PluginResults<P>().addResult(getPluginId(pluginOptional.get()), Result.ALREADY_DISABLED);
@@ -235,7 +235,7 @@ public abstract class AbstractPluginManager<P, D extends ServerUtilsPluginDescri
     /**
      * Unloads a list of plugins.
      */
-    public CloseablePluginResults<P> unloadPlugins(List<P> plugins) {
+    public CloseablePluginResults<P> unloadPlugins(Collection<P> plugins) {
         List<P> orderedPlugins;
         try {
             orderedPlugins = determineLoadOrder(plugins);
@@ -259,7 +259,7 @@ public abstract class AbstractPluginManager<P, D extends ServerUtilsPluginDescri
     /**
      * Determines the load order of a list of plugins.
      */
-    public List<P> determineLoadOrder(List<P> plugins) throws IllegalStateException {
+    public List<P> determineLoadOrder(Collection<P> plugins) throws IllegalStateException {
         Map<D, P> descriptionMap = new HashMap<>(plugins.size());
         for (P plugin : plugins) {
             descriptionMap.put(getLoadedPluginDescription(plugin), plugin);
@@ -276,7 +276,7 @@ public abstract class AbstractPluginManager<P, D extends ServerUtilsPluginDescri
      * Determines the load order for a given collection of descriptions.
      * @throws IllegalStateException Iff circular dependency
      */
-    public List<D> determineLoadOrder(Collection<? extends D> descriptions) throws IllegalStateException {
+    public List<D> determineLoadOrder(Set<? extends D> descriptions) throws IllegalStateException {
         Map<String, D> pluginIdToDescriptionMap = new HashMap<>();
         for (D description : descriptions) {
             pluginIdToDescriptionMap.put(description.getId(), description);
