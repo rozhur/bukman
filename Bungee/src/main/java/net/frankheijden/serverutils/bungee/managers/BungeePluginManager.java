@@ -145,7 +145,7 @@ public class BungeePluginManager extends AbstractPluginManager<Plugin, BungeePlu
     }
 
     @Override
-    protected Optional<Plugin> checkPluginStates(List<Plugin> plugins, boolean enabled) {
+    protected Optional<Plugin> checkPluginStates(Collection<Plugin> plugins, boolean enabled) {
         return Optional.empty(); // Bungee can't differentiate between "loaded" and "enabled"
     }
 
