@@ -7,7 +7,8 @@ import net.frankheijden.serverutils.common.entities.ServerUtilsAudience;
 import net.frankheijden.serverutils.common.entities.ServerUtilsPlugin;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.minimessage.tag.Tag;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 
 public class MessagesResource extends ServerUtilsResource {
 
@@ -22,7 +23,7 @@ public class MessagesResource extends ServerUtilsResource {
     public MessagesResource(ServerUtilsPlugin<?, ?, ?, ?, ?> plugin) {
         super(plugin, MESSAGES_RESOURCE);
         this.messageMap = new HashMap<>();
-        this.miniMessage = MiniMessage.get();
+        this.miniMessage = MiniMessage.miniMessage();
     }
 
     public Message get(String path) {
@@ -54,31 +55,41 @@ public class MessagesResource extends ServerUtilsResource {
         public Message(PlaceholderConfigKey key) {
             this.key = key;
             this.messageString = getConfig().getString("messages." + key.getPath());
-            this.component = key.hasPlaceholders() ? null : miniMessage.parse(messageString);
+            this.component = key.hasPlaceholders() ? null : miniMessage.deserialize(messageString);
         }
 
         /**
          * Creates a {@link Component}.
          */
         public Component toComponent() {
-            return this.component == null ? miniMessage.parse(messageString) : this.component;
+            return this.component == null ? miniMessage.deserialize(messageString) : this.component;
         }
 
         /**
          * Creates a {@link Component}.
          */
-        public Component toComponent(Template... templates) {
-            return this.component == null ? miniMessage.parse(messageString, templates) : this.component;
+        public Component toComponent(TagResolver... templates) {
+            return this.component == null ? miniMessage.deserialize(messageString, templates) : this.component;
         }
 
         /**
          * Creates a {@link Component}.
          */
         public Component toComponent(String... placeholders) {
-            return this.component == null ? miniMessage.parse(messageString, placeholders) : this.component;
+            TagResolver.Builder builder = TagResolver.builder();
+            String placeholderKey = null;
+            for (int i = 0; i < placeholders.length; i++) {
+                if (i % 2 == 0) {
+                    placeholderKey = placeholders[i];
+                } else {
+                    String placeholderValue = placeholders[i];
+                    builder.tag(placeholderKey, Tag.inserting(Component.text(placeholderValue)));
+                }
+            }
+            return this.component == null ? miniMessage.deserialize(messageString, builder.build()) : this.component;
         }
 
-        public void sendTo(ServerUtilsAudience<?> serverAudience, Template... placeholders) {
+        public void sendTo(ServerUtilsAudience<?> serverAudience, TagResolver... placeholders) {
             serverAudience.sendMessage(toComponent(placeholders));
         }
     }
