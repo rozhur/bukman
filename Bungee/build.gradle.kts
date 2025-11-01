@@ -7,6 +7,8 @@ plugins {
 group = rootProject.group
 val rootDependencyDir = "${group}.dependencies"
 val dependencyDir = "${group}.bungee.dependencies"
+val rootDependencyDir = "net.frankheijden.serverutils.dependencies"
+val dependencyDir = "net.frankheijden.serverutils.bungee.dependencies"
 version = rootProject.version
 base {
     archivesName.set("${rootProject.name}-bungee")
