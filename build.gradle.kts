@@ -6,9 +6,6 @@ plugins {
     id("com.github.johnrengelman.shadow") version "7.1.2"
 }
 
-group = "net.frankheijden.serverutils"
-val dependencyDir = "${group}.dependencies"
-version = "3.5.6-SNAPSHOT"
 group = "org.zhdev.bukman"
 val dependencyDir = "net.frankheijden.serverutils.dependencies"
 version = "3.5.6"

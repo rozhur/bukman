@@ -5,8 +5,6 @@ plugins {
 }
 
 group = rootProject.group
-val rootDependencyDir = "${rootProject.group}.dependencies"
-val dependencyDir = "${group}.bukkit.dependencies"
 val rootDependencyDir = "net.frankheijden.serverutils.dependencies"
 val dependencyDir = "net.frankheijden.serverutils.bukkit.dependencies"
 version = rootProject.version
