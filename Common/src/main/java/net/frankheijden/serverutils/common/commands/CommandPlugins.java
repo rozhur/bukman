@@ -14,7 +14,8 @@ import net.frankheijden.serverutils.common.managers.AbstractPluginManager;
 import net.frankheijden.serverutils.common.utils.ListComponentBuilder;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.minimessage.tag.Tag;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 
 @SuppressWarnings("LineLength")
 public abstract class CommandPlugins<U extends ServerUtilsPlugin<P, ?, C, ?, D>, P, C extends ServerUtilsAudience<?>, D extends ServerUtilsPluginDescription>
@@ -49,7 +50,7 @@ public abstract class CommandPlugins<U extends ServerUtilsPlugin<P, ?, C, ?, D>,
         sender.sendMessage(messages.get(MessageKey.PLUGINS_HEADER).toComponent());
         TextComponent.Builder builder = Component.text();
         builder.append(messages.get(MessageKey.PLUGINS_PREFIX).toComponent(
-                Template.of("count", String.valueOf(filteredPlugins.size()))
+                TagResolver.resolver("count", Tag.inserting(Component.text(String.valueOf(filteredPlugins.size()))))
         ));
         builder.append(ListComponentBuilder.create(filteredPlugins)
                 .separator(messages.get(MessageKey.PLUGINS_SEPARATOR).toComponent())
@@ -62,11 +63,11 @@ public abstract class CommandPlugins<U extends ServerUtilsPlugin<P, ?, C, ?, D>,
                             ? MessageKey.PLUGINS_FORMAT
                             : MessageKey.PLUGINS_FORMAT_DISABLED;
                     formatBuilder.append(messages.get(formatKey).toComponent(
-                            Template.of("plugin", description.getName())
+                            TagResolver.resolver("plugin", Tag.inserting(Component.text(description.getName())))
                     ));
                     if (hasVersionFlag) {
                         formatBuilder.append(messages.get(MessageKey.PLUGINS_VERSION).toComponent(
-                                Template.of("version", description.getVersion())
+                                TagResolver.resolver("version", Tag.inserting(Component.text(description.getVersion())))
                         ));
                     }
 
