@@ -7,7 +7,7 @@ plugins {
 group = rootProject.group
 version = "${rootProject.version}"
 base {
-    archivesName.set("${rootProject.name}-common")
+    archivesName.set("${rootProject.name}-Common")
 }
 
 repositories {

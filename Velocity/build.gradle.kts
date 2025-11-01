@@ -8,7 +8,7 @@ group = "${rootProject.group}"
 val dependencyDir = "net.frankheijden.serverutils.velocity.dependencies"
 version = rootProject.version
 base {
-    archivesName.set("${rootProject.name}-velocity")
+    archivesName.set("${rootProject.name}-Velocity")
 }
 
 repositories {

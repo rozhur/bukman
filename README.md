@@ -25,7 +25,7 @@ repositories {
 }
 
 dependencies {
-  compileOnly("org.zhdev.bukman:bukman:VERSION")
+  compileOnly("org.zhdev.bukman:Bukman:VERSION")
 }
 ```
 
@@ -44,7 +44,7 @@ dependencies {
     <!-- Bukman dependency -->
     <dependency>
       <groupId>org.zhdev.bukman</groupId>
-      <artifactId>bukman</artifactId>
+      <artifactId>Bukman</artifactId>
       <version>VERSION</version>
       <scope>provided</scope>
     </dependency>

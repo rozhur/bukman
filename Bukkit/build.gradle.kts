@@ -9,7 +9,7 @@ val rootDependencyDir = "net.frankheijden.serverutils.dependencies"
 val dependencyDir = "net.frankheijden.serverutils.bukkit.dependencies"
 version = rootProject.version
 base {
-    archivesName.set("${rootProject.name}-bukkit")
+    archivesName.set("${rootProject.name}-Bukkit")
 }
 
 dependencies {

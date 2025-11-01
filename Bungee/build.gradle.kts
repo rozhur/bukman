@@ -9,7 +9,7 @@ val rootDependencyDir = "net.frankheijden.serverutils.dependencies"
 val dependencyDir = "net.frankheijden.serverutils.bungee.dependencies"
 version = rootProject.version
 base {
-    archivesName.set("${rootProject.name}-bungee")
+    archivesName.set("${rootProject.name}-Bungee")
 }
 
 repositories {
