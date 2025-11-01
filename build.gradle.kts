@@ -101,26 +101,21 @@ subprojects {
     publishing {
         repositories {
             maven {
-                name = "fvdh"
-                url = if (rootProject.version.toString().endsWith("-SNAPSHOT")) {
-                    uri("https://repo.fvdh.dev/snapshots")
-                } else {
-                    uri("https://repo.fvdh.dev/releases")
-                }
-
+                name = "zhdev"
+                url = uri("https://maven.zhira.net/repository/zhdev/")
                 credentials {
-                    username = System.getenv("FVDH_USERNAME")
-                    password = System.getenv("FVDH_TOKEN")
+                    username = System.getenv("MAVEN_USERNAME")
+                    password = System.getenv("MAVEN_PASSWORD")
                 }
             }
         }
 
         publications {
-            create<MavenPublication>("bukman") {
+            create<MavenPublication>("Bukman") {
                 artifact(tasks["shadowJar"]) {
                     classifier = ""
                 }
-                artifactId = "bukman-$artifactId"
+                artifactId = "Bukman-$artifactId"
             }
         }
     }
@@ -180,26 +175,21 @@ tasks.register<Copy>("copyJars") {
 publishing {
     repositories {
         maven {
-            name = "fvdh"
-            url = if (version.toString().endsWith("-SNAPSHOT")) {
-                uri("https://repo.fvdh.dev/snapshots")
-            } else {
-                uri("https://repo.fvdh.dev/releases")
-            }
-
+            name = "zhdev"
+            url = uri("https://maven.zhira.net/repository/zhdev/")
             credentials {
-                username = System.getenv("FVDH_USERNAME")
-                password = System.getenv("FVDH_TOKEN")
+                username = System.getenv("MAVEN_USERNAME")
+                password = System.getenv("MAVEN_PASSWORD")
             }
         }
     }
 
     publications {
-        create<MavenPublication>("bukman") {
+        create<MavenPublication>("Bukman") {
             artifact(tasks["shadowJar"]) {
                 classifier = ""
             }
-            artifactId = "bukman"
+            artifactId = "Bukman"
         }
     }
 }
